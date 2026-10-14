@@ -4,18 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nexviqa — Liquid Chronos & Atmospheric Weather</title>
-  <meta name="description" content="Nexviqa is an ultra-modern liquid glass clock and real-time atmospheric weather station featuring fluid aesthetics, world time, stopwatch, and ambient soundscapes.">
+  <meta name="description" content="Nexviqa is an ultra-modern liquid glass clock and real-time atmospheric weather station featuring fluid aesthetics, 18 themes, 16 soundscapes, world time, stopwatch, and timer.">
   <meta name="theme-color" content="#030712">
 
   <!-- Open Graph / Meta for Cloudflare deployment preview -->
   <meta property="og:title" content="Nexviqa — Liquid Chronos & Atmospheric Weather">
-  <meta property="og:description" content="A state-of-the-art liquid glass clock and live weather station with interactive fluid dynamics.">
+  <meta property="og:description" content="A state-of-the-art liquid glass clock and live weather station with 18 themes, 16 sound effects, and interactive fluid dynamics.">
   <meta property="og:type" content="website">
 
-  <!-- Google Fonts: Outfit & Space Grotesk -->
+  <!-- Google Fonts: Outfit, Space Grotesk, Syne -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💧</text></svg>">
@@ -50,19 +50,19 @@
 
       <!-- Navigation Tabs -->
       <nav class="nav-tabs" role="tablist">
-        <button class="nav-btn active" data-tab="clock-view" id="tab-clock">
+        <button class="nav-btn active sfx-click" data-tab="clock-view" id="tab-clock">
           <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
           <span>Clock</span>
         </button>
-        <button class="nav-btn" data-tab="world-view" id="tab-world">
+        <button class="nav-btn sfx-click" data-tab="world-view" id="tab-world">
           <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
           <span>World</span>
         </button>
-        <button class="nav-btn" data-tab="stopwatch-view" id="tab-stopwatch">
+        <button class="nav-btn sfx-click" data-tab="stopwatch-view" id="tab-stopwatch">
           <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="13" r="8"></circle><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="5" x2="12" y2="2"></line><line x1="10" y1="2" x2="14" y2="2"></line></svg>
           <span>Stopwatch</span>
         </button>
-        <button class="nav-btn" data-tab="timer-view" id="tab-timer">
+        <button class="nav-btn sfx-click" data-tab="timer-view" id="tab-timer">
           <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M5 22h14"></path><path d="M5 2h14"></path><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"></path><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"></path></svg>
           <span>Timer</span>
         </button>
@@ -70,33 +70,35 @@
 
       <!-- Right Header Controls -->
       <div class="header-actions">
-        <!-- Soundscape Generator Button -->
-        <button class="icon-action-btn" id="soundscape-toggle" title="Liquid Ambient Audio" aria-label="Toggle Ambient Audio">
-          <svg id="sound-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+        <!-- Sound Studio Button (Opens 16 Sounds & Audio Studio) -->
+        <button class="icon-action-btn sfx-click" id="sound-studio-btn" title="Open 16 Liquid Sounds & FX Studio" aria-label="Open Sound Studio">
+          <svg id="sound-icon" viewBox="0 0 24 24" width="17" height="17" stroke="currentColor" stroke-width="2" fill="none">
             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
             <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
             <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
           </svg>
-          <span class="sound-label">Ambient Off</span>
+          <span class="sound-label" id="active-sound-label">Audio: Off</span>
+          <span class="badge-count">16</span>
         </button>
 
-        <!-- Theme Preset Picker -->
-        <div class="theme-dropdown-container">
-          <button class="icon-action-btn" id="theme-btn" title="Fluid Color Accent" aria-label="Theme Color Accent">
-            <span class="theme-dot current-theme-dot"></span>
-            <span class="theme-name">Ocean</span>
-          </button>
-          <div class="theme-menu glass-card" id="theme-menu">
-            <button class="theme-option" data-theme="ocean"><span class="theme-dot" style="background:#00d2ff"></span> Ocean Cyan</button>
-            <button class="theme-option" data-theme="neon"><span class="theme-dot" style="background:#b026ff"></span> Neon Violet</button>
-            <button class="theme-option" data-theme="emerald"><span class="theme-dot" style="background:#00f5a0"></span> Bioluminescent</button>
-            <button class="theme-option" data-theme="solar"><span class="theme-dot" style="background:#ff7b00"></span> Solar Amber</button>
-            <button class="theme-option" data-theme="mercury"><span class="theme-dot" style="background:#e0e8f5"></span> Liquid Silver</button>
-          </div>
-        </div>
+        <!-- Theme Gallery Button (Opens 18 Liquid Themes Gallery) -->
+        <button class="icon-action-btn sfx-click" id="themes-modal-btn" title="Open 18 Liquid Themes Gallery" aria-label="Open Themes Gallery">
+          <span class="theme-dot current-theme-dot"></span>
+          <span class="theme-name" id="header-theme-name">Ocean</span>
+          <span class="badge-count">18</span>
+        </button>
+
+        <!-- Options / Settings Modal Button -->
+        <button class="icon-action-btn sfx-click" id="settings-btn" title="Clock & Display Options" aria-label="Open Settings">
+          <svg viewBox="0 0 24 24" width="17" height="17" stroke="currentColor" stroke-width="2" fill="none">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          <span>Options</span>
+        </button>
 
         <!-- 12/24H Format Toggle -->
-        <button class="format-toggle-btn glass-pill" id="format-toggle" title="Toggle 12h/24h Format">
+        <button class="format-toggle-btn glass-pill sfx-click" id="format-toggle" title="Toggle 12h/24h Format">
           <span id="format-indicator">24H</span>
         </button>
       </div>
@@ -111,15 +113,14 @@
 
           <!-- Left / Primary: The Liquid Chronos Display Card -->
           <div class="glass-card hero-clock-card">
-            <!-- Glass specular top reflection -->
             <div class="card-specular-highlight"></div>
 
             <!-- Top bar inside card -->
             <div class="card-header-bar">
               <div class="clock-mode-switches">
-                <button class="mode-pill active" id="btn-mode-digital">Digital Fluid</button>
-                <button class="mode-pill" id="btn-mode-analog">Analog Viscous</button>
-                <button class="mode-pill" id="btn-mode-split">Dual Core</button>
+                <button class="mode-pill active sfx-click" id="btn-mode-digital">Digital Fluid</button>
+                <button class="mode-pill sfx-click" id="btn-mode-analog">Analog Viscous</button>
+                <button class="mode-pill sfx-click" id="btn-mode-split">Dual Core</button>
               </div>
               <div class="time-precision-badge">
                 <span class="pulse-indicator"></span>
@@ -130,7 +131,7 @@
             <!-- DIGITAL LIQUID CLOCK -->
             <div class="digital-clock-container" id="digital-view">
               <!-- Water Level Wave Tank Behind Digits -->
-              <div class="liquid-wave-tank">
+              <div class="liquid-wave-tank" id="liquid-wave-tank">
                 <div class="liquid-wave wave-1" id="wave-1"></div>
                 <div class="liquid-wave wave-2" id="wave-2"></div>
               </div>
@@ -145,7 +146,7 @@
                   <span class="time-num" id="minutes">00</span>
                   <span class="digit-label">MINUTES</span>
                 </div>
-                <span class="fluid-separator">:</span>
+                <span class="fluid-separator" id="seconds-separator">:</span>
                 <div class="digit-box" id="seconds-box">
                   <span class="time-num accent-text" id="seconds">00</span>
                   <span class="digit-label">SECONDS</span>
@@ -157,7 +158,7 @@
               </div>
 
               <!-- Fluid Progress Bar for the Current Minute -->
-              <div class="fluid-progress-wrap">
+              <div class="fluid-progress-wrap" id="fluid-progress-wrap">
                 <div class="fluid-progress-track">
                   <div class="fluid-progress-bar" id="second-progress-bar">
                     <div class="fluid-droplet-glow"></div>
@@ -225,7 +226,7 @@
                 <span class="location-country" id="weather-country">Searching coordinates</span>
               </div>
 
-              <button class="locate-btn glass-pill" id="btn-geolocate" title="Use My Current GPS Location">
+              <button class="locate-btn glass-pill sfx-click" id="btn-geolocate" title="Use My Current GPS Location">
                 <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
                 <span>GPS</span>
               </button>
@@ -236,7 +237,7 @@
               <form id="city-search-form" class="search-input-box">
                 <svg class="search-icon" viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 <input type="text" id="city-search-input" placeholder="Search any city in the world..." autocomplete="off">
-                <button type="submit" id="city-search-submit" class="search-btn">Search</button>
+                <button type="submit" id="city-search-submit" class="search-btn sfx-click">Search</button>
               </form>
               <div class="search-suggestions glass-card" id="search-suggestions" style="display:none;"></div>
             </div>
@@ -244,16 +245,15 @@
             <!-- Main Temperature & Dynamic Weather Glyph -->
             <div class="weather-hero-row">
               <div class="weather-glyph-wrapper" id="weather-icon-container">
-                <!-- SVG dynamically inserted by JS -->
                 <div class="weather-glyph-spinner"></div>
               </div>
               <div class="temp-display-wrap">
                 <div class="temp-digits">
                   <span class="temp-value" id="current-temp">--</span>
                   <div class="unit-toggle">
-                    <button class="unit-btn active" id="btn-celsius">°C</button>
+                    <button class="unit-btn active sfx-click" id="btn-celsius">°C</button>
                     <span class="unit-divider">/</span>
-                    <button class="unit-btn" id="btn-fahrenheit">°F</button>
+                    <button class="unit-btn sfx-click" id="btn-fahrenheit">°F</button>
                   </div>
                 </div>
                 <p class="weather-condition-desc" id="weather-desc">Syncing satellites...</p>
@@ -308,7 +308,6 @@
             <div class="forecast-section">
               <span class="forecast-section-title">5-DAY ATMOSPHERIC OUTLOOK</span>
               <div class="forecast-row" id="forecast-days-container">
-                <!-- Forecast items injected via JS -->
                 <div class="forecast-placeholder">Loading outlook...</div>
               </div>
             </div>
@@ -357,15 +356,15 @@
             </div>
 
             <div class="stopwatch-controls">
-              <button class="action-btn primary-glass-btn" id="sw-start-btn">
+              <button class="action-btn primary-glass-btn sfx-click" id="sw-start-btn">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                 <span>Start</span>
               </button>
-              <button class="action-btn glass-btn" id="sw-lap-btn" disabled>
+              <button class="action-btn glass-btn sfx-click" id="sw-lap-btn" disabled>
                 <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                 <span>Lap</span>
               </button>
-              <button class="action-btn glass-btn danger-hover" id="sw-reset-btn" disabled>
+              <button class="action-btn glass-btn danger-hover sfx-click" id="sw-reset-btn" disabled>
                 <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
                 <span>Reset</span>
               </button>
@@ -390,11 +389,11 @@
 
             <!-- Presets -->
             <div class="timer-preset-row">
-              <button class="preset-pill" data-seconds="60">1 Min</button>
-              <button class="preset-pill" data-seconds="300">5 Min</button>
-              <button class="preset-pill" data-seconds="600">10 Min</button>
-              <button class="preset-pill" data-seconds="1500">25 Min (Pomodoro)</button>
-              <button class="preset-pill" data-seconds="3600">1 Hour</button>
+              <button class="preset-pill sfx-click" data-seconds="60">1 Min</button>
+              <button class="preset-pill sfx-click" data-seconds="300">5 Min</button>
+              <button class="preset-pill sfx-click" data-seconds="600">10 Min</button>
+              <button class="preset-pill sfx-click" data-seconds="1500">25 Min (Pomodoro)</button>
+              <button class="preset-pill sfx-click" data-seconds="3600">1 Hour</button>
             </div>
 
             <!-- Timer Cylinder Display -->
@@ -425,8 +424,8 @@
             </div>
 
             <div class="timer-controls">
-              <button class="action-btn primary-glass-btn" id="timer-toggle-btn">Start Countdown</button>
-              <button class="action-btn glass-btn" id="timer-reset-btn">Reset</button>
+              <button class="action-btn primary-glass-btn sfx-click" id="timer-toggle-btn">Start Countdown</button>
+              <button class="action-btn glass-btn sfx-click" id="timer-reset-btn">Reset</button>
             </div>
           </div>
         </div>
@@ -442,14 +441,220 @@
           Cloudflare Pages Ready
         </span>
         <span class="footer-divider">&bull;</span>
-        <span class="footer-info">Nexviqa &bull; Open-Meteo Satellites &bull; Zero API Key Needed</span>
+        <span class="footer-info">Nexviqa &bull; 18 Liquid Themes &bull; 16 Soundscapes &bull; Open-Meteo Satellites</span>
       </div>
       <div class="footer-right">
         <span class="fps-counter" id="fps-counter">60 FPS</span>
         <span class="footer-divider">&bull;</span>
-        <span class="credit-text">Designed & Crafted for <strong>thisispiyushdev</strong></span>
+        <span class="credit-text">Crafted for <strong>thisispiyushdev</strong></span>
       </div>
     </footer>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 1: 18 LIQUID THEMES GALLERY
+       ========================================================================= -->
+  <div class="modal-backdrop" id="themes-modal" style="display:none;">
+    <div class="modal-card glass-card">
+      <div class="card-specular-highlight"></div>
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon-badge">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a14.5 14.5 0 0 0 0 20 10 10 0 0 0 0-20"></path></svg>
+          </div>
+          <div>
+            <h3 class="modal-title">Liquid Theme Gallery</h3>
+            <p class="modal-subtitle">Choose from 18 curated chromatic and fluid aesthetic profiles</p>
+          </div>
+        </div>
+        <button class="modal-close-btn sfx-click" id="close-themes-modal" aria-label="Close Themes">&times;</button>
+      </div>
+
+      <!-- Theme Categories Filter Tabs -->
+      <div class="theme-filter-row">
+        <button class="filter-pill active sfx-click" data-filter="all">All (18)</button>
+        <button class="filter-pill sfx-click" data-filter="cyber">Cyber & Neon</button>
+        <button class="filter-pill sfx-click" data-filter="natural">Elemental & Nature</button>
+        <button class="filter-pill sfx-click" data-filter="solar">Warm & Solar</button>
+        <button class="filter-pill sfx-click" data-filter="minimal">Minimal & Stealth</button>
+      </div>
+
+      <!-- Themes Grid Container -->
+      <div class="themes-gallery-grid" id="themes-gallery-grid">
+        <!-- Injected via JavaScript (18 themes) -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 2: 16 LIQUID SOUNDS & SFX STUDIO
+       ========================================================================= -->
+  <div class="modal-backdrop" id="sound-modal" style="display:none;">
+    <div class="modal-card glass-card sound-modal-card">
+      <div class="card-specular-highlight"></div>
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon-badge sound-badge">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+          </div>
+          <div>
+            <h3 class="modal-title">Atmospheric Soundscapes & FX Studio</h3>
+            <p class="modal-subtitle">16 browser-synthesized ambient audio landscapes & interactive sound effects</p>
+          </div>
+        </div>
+        <button class="modal-close-btn sfx-click" id="close-sound-modal" aria-label="Close Sound Studio">&times;</button>
+      </div>
+
+      <!-- Audio Visualizer & Master Control Deck -->
+      <div class="audio-master-deck glass-card">
+        <div class="deck-visualizer-wrap">
+          <canvas id="audio-visualizer-canvas" width="400" height="60"></canvas>
+          <div class="visualizer-status">
+            <span class="sound-indicator-dot" id="sound-indicator-dot"></span>
+            <span id="deck-status-text">Audio Engine Ready</span>
+          </div>
+        </div>
+
+        <div class="deck-controls-row">
+          <div class="volume-slider-group">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+            <input type="range" id="master-volume-slider" min="0" max="100" value="70" class="styled-slider">
+            <span id="volume-val-text">70%</span>
+          </div>
+
+          <button class="action-btn glass-btn danger-hover sfx-click" id="deck-stop-btn">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><rect x="6" y="6" width="12" height="12"></rect></svg>
+            <span>Stop All Sound</span>
+          </button>
+        </div>
+
+        <!-- Extra Sound Toggles -->
+        <div class="sound-preferences-row">
+          <label class="sound-checkbox-label">
+            <input type="checkbox" id="toggle-click-sfx" checked>
+            <span>💧 UI Fluid Click Sounds</span>
+          </label>
+          <label class="sound-checkbox-label">
+            <input type="checkbox" id="toggle-clock-tick">
+            <span>🕰️ Clock Second Tick Tone</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 16 Sounds Grid -->
+      <div class="sounds-grid" id="sounds-grid">
+        <!-- 16 sound cards injected via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 3: CLOCK & DISPLAY OPTIONS (SETTINGS)
+       ========================================================================= -->
+  <div class="modal-backdrop" id="settings-modal" style="display:none;">
+    <div class="modal-card glass-card settings-modal-card">
+      <div class="card-specular-highlight"></div>
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="modal-icon-badge settings-badge">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          </div>
+          <div>
+            <h3 class="modal-title">Clock & Atmosphere Options</h3>
+            <p class="modal-subtitle">Customize visual dials, animations, typography, and telemetry</p>
+          </div>
+        </div>
+        <button class="modal-close-btn sfx-click" id="close-settings-modal" aria-label="Close Settings">&times;</button>
+      </div>
+
+      <div class="settings-content-grid">
+        <!-- Display Toggles -->
+        <div class="settings-section">
+          <h4 class="settings-sec-title">Time Display Telemetry</h4>
+          
+          <div class="setting-row">
+            <div class="setting-info">
+              <span class="setting-name">Show Milliseconds</span>
+              <span class="setting-desc">Render fractional microsecond decimal count</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="opt-show-ms" checked>
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <span class="setting-name">Show Seconds</span>
+              <span class="setting-desc">Display seconds digits in digital view</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="opt-show-sec" checked>
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <span class="setting-name">Fluid Progress Track</span>
+              <span class="setting-desc">Show minute and day percentage progress bar</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="opt-show-progress" checked>
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <span class="setting-name">Liquid Wave Tank</span>
+              <span class="setting-desc">Wave undulation behind digital numbers</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="opt-wave-tank" checked>
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Typography & Aesthetics -->
+        <div class="settings-section">
+          <h4 class="settings-sec-title">Typography & Physics Engine</h4>
+
+          <div class="setting-row-vertical">
+            <div class="setting-info">
+              <span class="setting-name">Clock Typography Font</span>
+              <span class="setting-desc">Choose modern geometric typeface</span>
+            </div>
+            <div class="options-pill-selector" id="font-selector">
+              <button class="opt-pill active sfx-click" data-font="outfit">Outfit Modern</button>
+              <button class="opt-pill sfx-click" data-font="space">Space Grotesk</button>
+              <button class="opt-pill sfx-click" data-font="syne">Syne Geometric</button>
+            </div>
+          </div>
+
+          <div class="setting-row-vertical">
+            <div class="setting-info">
+              <span class="setting-name">Liquid Canvas Density</span>
+              <span class="setting-desc">Controls floating fluid particles & physics load</span>
+            </div>
+            <div class="options-pill-selector" id="density-selector">
+              <button class="opt-pill sfx-click" data-density="low">Battery Saver (12)</button>
+              <button class="opt-pill active sfx-click" data-density="medium">Fluid Standard (24)</button>
+              <button class="opt-pill sfx-click" data-density="high">Ultra Liquid (48)</button>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-info">
+              <span class="setting-name">Reset Preferences</span>
+              <span class="setting-desc">Restore all themes and options to defaults</span>
+            </div>
+            <button class="action-btn glass-btn danger-hover sfx-click" id="btn-reset-settings">Reset Defaults</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="script.js"></script>

@@ -2,30 +2,90 @@
  * ============================================================================
  * NEXVIQA — LIQUID CHRONOS & ATMOSPHERE ENGINE
  * Real-time clock, dynamic liquid canvas, live weather station, world time,
- * stopwatch, fluid timer & Web Audio ambient soundscapes.
+ * stopwatch, fluid timer, 18 liquid themes, 16 soundscapes & Web Audio Studio.
  * ============================================================================
  */
 
 (function () {
   'use strict';
 
+  // ==========================================================================
+  // 18 LIQUID THEMES DEFINITION
+  // ==========================================================================
+  const THEMES = [
+    { id: 'ocean', name: 'Ocean Cyan', cat: 'natural', dots: ['#00d2ff', '#0066ff', '#00f0ff'], desc: 'Deep bioluminescent oceanic blue' },
+    { id: 'neon', name: 'Neon Violet', cat: 'cyber', dots: ['#d946ef', '#8b5cf6', '#f43f5e'], desc: 'High-voltage electric ultraviolet' },
+    { id: 'emerald', name: 'Bio Emerald', cat: 'natural', dots: ['#10b981', '#06b6d4', '#34d399'], desc: 'Toxic alien green luminescence' },
+    { id: 'solar', name: 'Solar Amber', cat: 'solar', dots: ['#f59e0b', '#ef4444', '#fbbf24'], desc: 'Incandescent stellar flare' },
+    { id: 'mercury', name: 'Liquid Silver', cat: 'minimal', dots: ['#cbd5e1', '#64748b', '#f1f5f9'], desc: 'Pure reflective molten platinum' },
+    { id: 'nebula', name: 'Midnight Nebula', cat: 'cyber', dots: ['#6366f1', '#3b82f6', '#a855f7'], desc: 'Deep interstellar cosmos glow' },
+    { id: 'sakura', name: 'Sakura Blossom', cat: 'natural', dots: ['#fb7185', '#f43f5e', '#fda4af'], desc: 'Delicate glowing peach blossom' },
+    { id: 'gold', name: 'Imperial Gold', cat: 'solar', dots: ['#eab308', '#d97706', '#fef08a'], desc: 'Opulent warm golden radiance' },
+    { id: 'crimson', name: 'Crimson Eclipse', cat: 'solar', dots: ['#ef4444', '#b91c1c', '#f87171'], desc: 'Dark blood moon ruby aurora' },
+    { id: 'aurora', name: 'Aurora Borealis', cat: 'natural', dots: ['#2dd4bf', '#818cf8', '#34d399'], desc: 'Mystic polar green & purple skies' },
+    { id: 'synthwave', name: 'Synthwave 80s', cat: 'cyber', dots: ['#ec4899', '#06b6d4', '#facc15'], desc: 'Outrun cybernetic retro sunset' },
+    { id: 'forest', name: 'Deep Jade', cat: 'natural', dots: ['#22c55e', '#15803d', '#84cc16'], desc: 'Subtropical lush rainforest canopy' },
+    { id: 'frost', name: 'Glacial Ice', cat: 'natural', dots: ['#38bdf8', '#1d4ed8', '#e0f2fe'], desc: 'Sub-zero crystal diamond frost' },
+    { id: 'amethyst', name: 'Twilight Amethyst', cat: 'cyber', dots: ['#a855f7', '#581c87', '#c084fc'], desc: 'Royal crystalline purple twilight' },
+    { id: 'magma', name: 'Volcanic Lava', cat: 'solar', dots: ['#ff4500', '#ff8c00', '#b91c1c'], desc: 'Molten earth basalt incandescent glow' },
+    { id: 'matrix', name: 'Electric Matrix', cat: 'cyber', dots: ['#10e052', '#059669', '#4ade80'], desc: 'Cybernetic high-speed terminal stream' },
+    { id: 'coral', name: 'Cyber Coral', cat: 'solar', dots: ['#fb923c', '#14b8a6', '#fdba74'], desc: 'Tropical reef sunset gradient' },
+    { id: 'stealth', name: 'Phantom Stealth', cat: 'minimal', dots: ['#f8fafc', '#475569', '#cbd5e1'], desc: 'Dark matter obsidian & clean white' }
+  ];
+
+  // ==========================================================================
+  // 16 SOUND EFFECTS & AMBIENT GENERATORS DEFINITION
+  // ==========================================================================
+  const SOUNDS = [
+    { id: 'ocean', name: 'Oceanic Waves', emoji: '🌊', type: 'ambient', desc: 'Rhythmic tidal ocean swell' },
+    { id: 'rain', name: 'Soothing Rainfall', emoji: '🌧️', type: 'ambient', desc: 'Continuous calm rainfall' },
+    { id: 'thunder', name: 'Storm & Thunder', emoji: '⚡', type: 'ambient', desc: 'Rolling thunder with storm drops' },
+    { id: 'droplet', name: 'Liquid Water Droplet', emoji: '💧', type: 'sfx', desc: 'Resonant authentic fluid bloop' },
+    { id: 'bowl', name: 'Zen Tibetan Bowl', emoji: '🔔', type: 'sfx', desc: '432Hz harmonic singing bowl' },
+    { id: 'tick', name: 'Vintage Clock Tick', emoji: '🕰️', type: 'sfx', desc: 'Mechanical double woodblock tick' },
+    { id: 'space', name: 'Cosmic Deep Space', emoji: '🌌', type: 'ambient', desc: 'Sub-bass interstellar brownian drone' },
+    { id: 'campfire', name: 'Campfire Embers', emoji: '🪵', type: 'ambient', desc: 'Warm crackling timber embers' },
+    { id: 'birds', name: 'Morning Birdsong', emoji: '🐦', type: 'ambient', desc: 'Gentle forest sunrise chirps' },
+    { id: 'synth', name: 'Retro Synth Chime', emoji: '📻', type: 'sfx', desc: '80s major 7th synth arpeggio' },
+    { id: 'binaural', name: 'Alpha Focus 10Hz', emoji: '🎧', type: 'ambient', desc: 'Binaural beat for deep mental flow' },
+    { id: 'zen', name: 'Meditation Gong 528Hz', emoji: '🧘', type: 'sfx', desc: 'Pure restorative solfeggio tone' },
+    { id: 'bubbles', name: 'Underwater Bubbles', emoji: '🫧', type: 'ambient', desc: 'Effervescent rising liquid bubbles' },
+    { id: 'wind', name: 'Mountain Breeze', emoji: '💨', type: 'ambient', desc: 'Alpine resonant wind sweeps' },
+    { id: 'cyber', name: 'Cyber HUD Radar', emoji: '🛸', type: 'sfx', desc: 'Sci-fi telemetry pulse & scan' },
+    { id: 'stream', name: 'Crystal River Creek', emoji: '🏞️', type: 'ambient', desc: 'Fast flowing mountain spring water' }
+  ];
+
   // --- STATE CONFIGURATION ---
   const state = {
     is24Hour: localStorage.getItem('nexviqa_24h') !== 'false',
-    clockMode: 'digital', // 'digital', 'analog', 'split'
-    tempUnit: localStorage.getItem('nexviqa_unit') || 'C', // 'C' or 'F'
+    clockMode: 'digital',
+    tempUnit: localStorage.getItem('nexviqa_unit') || 'C',
     theme: localStorage.getItem('nexviqa_theme') || 'ocean',
+    options: {
+      showMs: localStorage.getItem('opt_show_ms') !== 'false',
+      showSec: localStorage.getItem('opt_show_sec') !== 'false',
+      showProgress: localStorage.getItem('opt_show_progress') !== 'false',
+      waveTank: localStorage.getItem('opt_wave_tank') !== 'false',
+      font: localStorage.getItem('opt_font') || 'outfit',
+      density: localStorage.getItem('opt_density') || 'medium',
+      volume: parseInt(localStorage.getItem('opt_volume') || '70', 10),
+      clickSfx: localStorage.getItem('opt_click_sfx') !== 'false',
+      clockTick: localStorage.getItem('opt_clock_tick') === 'true'
+    },
+    audio: {
+      ctx: null,
+      masterGain: null,
+      analyser: null,
+      activeSoundId: null,
+      activeNodes: [],
+      visualizerId: null
+    },
     currentWeather: null,
     currentLocation: {
       name: 'New Delhi',
       country: 'India',
       lat: 28.6139,
       lon: 77.2090
-    },
-    audio: {
-      ctx: null,
-      isPlaying: false,
-      nodes: []
     },
     stopwatch: {
       running: false,
@@ -39,7 +99,8 @@
       totalSeconds: 300,
       remainingSeconds: 300,
       intervalId: null
-    }
+    },
+    lastSecond: -1
   };
 
   // --- DOM SELECTORS ---
@@ -50,6 +111,8 @@
   const hoursEl = $('hours');
   const minutesEl = $('minutes');
   const secondsEl = $('seconds');
+  const secondsBox = $('seconds-box');
+  const secondsSeparator = $('seconds-separator');
   const ampmEl = $('ampm');
   const msecEl = $('milliseconds');
   const dateEl = $('calendar-date');
@@ -61,6 +124,8 @@
   const secondProgressBar = $('second-progress-bar');
   const secondRatio = $('second-ratio');
   const dayPercentEl = $('day-percent');
+  const fluidProgressWrap = $('fluid-progress-wrap');
+  const liquidWaveTank = $('liquid-wave-tank');
   const digitalView = $('digital-view');
   const analogView = $('analog-view');
   const analogHour = $('analog-hour');
@@ -87,81 +152,841 @@
   const citySearchInput = $('city-search-input');
   const searchSuggestions = $('search-suggestions');
 
-  // Navigation & Theme DOM
-  const navButtons = $$('.nav-btn');
-  const tabPanes = $$('.tab-pane');
+  // Modals & Header DOM
+  const soundStudioBtn = $('sound-studio-btn');
+  const activeSoundLabel = $('active-sound-label');
+  const themesModalBtn = $('themes-modal-btn');
+  const headerThemeName = $('header-theme-name');
+  const settingsBtn = $('settings-btn');
   const formatToggle = $('format-toggle');
   const formatIndicator = $('format-indicator');
-  const themeBtn = $('theme-btn');
-  const themeMenu = $('theme-menu');
-  const soundscapeToggle = $('soundscape-toggle');
-  const soundLabel = soundscapeToggle.querySelector('.sound-label');
 
-  // Stopwatch DOM
-  const swDisplay = $('sw-display');
-  const swStatus = $('sw-status');
-  const swRingProgress = $('stopwatch-ring-progress');
-  const swStartBtn = $('sw-start-btn');
-  const swLapBtn = $('sw-lap-btn');
-  const swResetBtn = $('sw-reset-btn');
-  const swLapsWrapper = $('sw-laps-wrapper');
-  const swLapList = $('sw-lap-list');
+  const themesModal = $('themes-modal');
+  const closeThemesModal = $('close-themes-modal');
+  const themesGalleryGrid = $('themes-gallery-grid');
 
-  // Timer DOM
-  const timerFill = $('timer-fill');
-  const timerInputsGroup = $('timer-inputs-group');
-  const timerActiveDisplay = $('timer-active-display');
-  const timerH = $('timer-h');
-  const timerM = $('timer-m');
-  const timerS = $('timer-s');
-  const timerToggleBtn = $('timer-toggle-btn');
-  const timerResetBtn = $('timer-reset-btn');
-  const presetPills = $$('.preset-pill');
+  const soundModal = $('sound-modal');
+  const closeSoundModal = $('close-sound-modal');
+  const soundsGrid = $('sounds-grid');
+  const masterVolumeSlider = $('master-volume-slider');
+  const volumeValText = $('volume-val-text');
+  const deckStopBtn = $('deck-stop-btn');
+  const deckStatusText = $('deck-status-text');
+  const soundIndicatorDot = $('sound-indicator-dot');
+  const toggleClickSfx = $('toggle-click-sfx');
+  const toggleClockTick = $('toggle-clock-tick');
+  const visualizerCanvas = $('audio-visualizer-canvas');
 
-  // Canvas
+  const settingsModal = $('settings-modal');
+  const closeSettingsModal = $('close-settings-modal');
+  const optShowMs = $('opt-show-ms');
+  const optShowSec = $('opt-show-sec');
+  const optShowProgress = $('opt-show-progress');
+  const optWaveTank = $('opt-wave-tank');
+  const btnResetSettings = $('btn-reset-settings');
+
+  // Canvas Background
   const canvas = $('liquid-canvas');
   const ctx = canvas ? canvas.getContext('2d') : null;
   const fpsCounter = $('fps-counter');
 
   // ==========================================================================
-  // 1. THEME ENGINE & UI CONTROLS
+  // 1. THEMES GALLERY ENGINE (18 THEMES)
   // ==========================================================================
-  function applyTheme(themeName) {
-    state.theme = themeName;
-    document.documentElement.setAttribute('data-theme', themeName);
-    localStorage.setItem('nexviqa_theme', themeName);
+  function applyTheme(themeId) {
+    const t = THEMES.find((item) => item.id === themeId) || THEMES[0];
+    state.theme = t.id;
+    document.documentElement.setAttribute('data-theme', t.id);
+    localStorage.setItem('nexviqa_theme', t.id);
 
-    const themeLabel = themeBtn.querySelector('.theme-name');
-    if (themeLabel) {
-      const titles = {
-        ocean: 'Ocean',
-        neon: 'Neon',
-        emerald: 'Bio Green',
-        solar: 'Solar',
-        mercury: 'Silver'
-      };
-      themeLabel.textContent = titles[themeName] || 'Theme';
-    }
+    if (headerThemeName) headerThemeName.textContent = t.name.split(' ')[0];
+
+    // Update active highlight in gallery cards
+    $$('.theme-gallery-card').forEach((card) => {
+      card.classList.toggle('active', card.dataset.theme === t.id);
+    });
   }
 
-  themeBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    themeMenu.classList.toggle('show');
-  });
+  function renderThemesGallery(filterCat = 'all') {
+    if (!themesGalleryGrid) return;
+    themesGalleryGrid.innerHTML = '';
 
-  document.addEventListener('click', () => {
-    themeMenu.classList.remove('show');
-    searchSuggestions.style.display = 'none';
-  });
+    const filtered = filterCat === 'all' ? THEMES : THEMES.filter((t) => t.cat === filterCat);
 
-  $$('.theme-option').forEach((opt) => {
-    opt.addEventListener('click', () => {
-      applyTheme(opt.dataset.theme);
-      themeMenu.classList.remove('show');
+    filtered.forEach((t) => {
+      const card = document.createElement('div');
+      card.className = `theme-gallery-card ${t.id === state.theme ? 'active' : ''}`;
+      card.dataset.theme = t.id;
+
+      card.innerHTML = `
+        <div class="theme-card-swatches">
+          <span class="swatch-circle" style="background:${t.dots[0]}"></span>
+          <span class="swatch-circle" style="background:${t.dots[1]}"></span>
+          <span class="swatch-circle" style="background:${t.dots[2]}"></span>
+        </div>
+        <div class="theme-card-info">
+          <div class="theme-card-title">${t.name}</div>
+          <div class="theme-card-category">${t.desc}</div>
+        </div>
+      `;
+
+      card.addEventListener('click', () => {
+        applyTheme(t.id);
+        playClickSound();
+      });
+
+      themesGalleryGrid.appendChild(card);
+    });
+  }
+
+  // Themes filter pills
+  $$('.theme-filter-row .filter-pill').forEach((pill) => {
+    pill.addEventListener('click', () => {
+      $$('.theme-filter-row .filter-pill').forEach((p) => p.classList.remove('active'));
+      pill.classList.add('active');
+      renderThemesGallery(pill.dataset.filter);
     });
   });
 
-  // 12h/24h toggle
+  themesModalBtn.addEventListener('click', () => {
+    themesModal.style.display = 'flex';
+    renderThemesGallery();
+  });
+
+  closeThemesModal.addEventListener('click', () => {
+    themesModal.style.display = 'none';
+  });
+
+  // ==========================================================================
+  // 2. WEB AUDIO STUDIO & 16 SOUND EFFECTS SYNTHESIZER
+  // ==========================================================================
+  function initAudioEngine() {
+    if (state.audio.ctx) return;
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    state.audio.ctx = new AudioCtx();
+
+    // Master Gain Node
+    state.audio.masterGain = state.audio.ctx.createGain();
+    state.audio.masterGain.gain.setValueAtTime(state.options.volume / 100, state.audio.ctx.currentTime);
+
+    // Analyser Node for Visualizer
+    state.audio.analyser = state.audio.ctx.createAnalyser();
+    state.audio.analyser.fftSize = 64;
+
+    state.audio.masterGain.connect(state.audio.analyser);
+    state.audio.analyser.connect(state.audio.ctx.destination);
+
+    startVisualizerLoop();
+  }
+
+  function startVisualizerLoop() {
+    if (!visualizerCanvas) return;
+    const vCtx = visualizerCanvas.getContext('2d');
+    const bufferLength = state.audio.analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    function drawVisualizer() {
+      requestAnimationFrame(drawVisualizer);
+      vCtx.clearRect(0, 0, visualizerCanvas.width, visualizerCanvas.height);
+
+      state.audio.analyser.getByteFrequencyData(dataArray);
+
+      const barWidth = (visualizerCanvas.width / bufferLength) * 1.5;
+      let barHeight;
+      let x = 0;
+
+      for (let i = 0; i < bufferLength; i++) {
+        barHeight = (dataArray[i] / 255) * visualizerCanvas.height;
+
+        vCtx.fillStyle = state.audio.activeSoundId ? 'rgba(0, 210, 255, 0.85)' : 'rgba(255, 255, 255, 0.15)';
+        vCtx.fillRect(x, visualizerCanvas.height - barHeight, barWidth - 2, barHeight);
+
+        x += barWidth;
+      }
+    }
+    drawVisualizer();
+  }
+
+  function stopAllSounds() {
+    state.audio.activeNodes.forEach((node) => {
+      try {
+        if (node.stop) node.stop();
+        node.disconnect();
+      } catch {}
+    });
+    state.audio.activeNodes = [];
+    state.audio.activeSoundId = null;
+
+    if (activeSoundLabel) activeSoundLabel.textContent = 'Audio: Off';
+    if (deckStatusText) deckStatusText.textContent = 'Audio Engine Ready';
+    if (soundIndicatorDot) soundIndicatorDot.classList.remove('active');
+
+    // Remove active styles from sound cards
+    $$('.sound-card').forEach((c) => c.classList.remove('playing'));
+  }
+
+  // --- Sound Generation Routines ---
+  function createNoiseBuffer(type = 'pink') {
+    const ctx = state.audio.ctx;
+    const bufferSize = 2 * ctx.sampleRate;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+
+    if (type === 'pink') {
+      let b0 = 0, b1 = 0, b2 = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        data[i] = (b0 + b1 + b2) * 0.15;
+      }
+    } else if (type === 'brown') {
+      let lastOut = 0.0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        data[i] = (lastOut + (0.02 * white)) / 1.02;
+        lastOut = data[i];
+        data[i] *= 3.5;
+      }
+    } else {
+      // White noise
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.2;
+      }
+    }
+    return buffer;
+  }
+
+  function playSound(soundId) {
+    initAudioEngine();
+    const ctx = state.audio.ctx;
+    if (ctx.state === 'suspended') ctx.resume();
+
+    // If already playing this sound, toggle off
+    if (state.audio.activeSoundId === soundId) {
+      stopAllSounds();
+      return;
+    }
+
+    stopAllSounds();
+    state.audio.activeSoundId = soundId;
+
+    const s = SOUNDS.find((item) => item.id === soundId);
+    if (!s) return;
+
+    if (activeSoundLabel) activeSoundLabel.textContent = `${s.emoji} ${s.name}`;
+    if (deckStatusText) deckStatusText.textContent = `Streaming: ${s.name}`;
+    if (soundIndicatorDot) soundIndicatorDot.classList.add('active');
+
+    const card = document.querySelector(`.sound-card[data-sound="${soundId}"]`);
+    if (card) card.classList.add('playing');
+
+    const now = ctx.currentTime;
+
+    switch (soundId) {
+      case 'ocean': {
+        const noise = ctx.createBufferSource();
+        noise.buffer = createNoiseBuffer('pink');
+        noise.loop = true;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(350, now);
+
+        const lfo = ctx.createOscillator();
+        lfo.frequency.setValueAtTime(0.12, now); // 8s cycle
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.18, now);
+
+        lfo.connect(gain.gain);
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(state.audio.masterGain);
+
+        noise.start();
+        lfo.start();
+        state.audio.activeNodes = [noise, lfo, filter, gain];
+        break;
+      }
+
+      case 'rain': {
+        const noise = ctx.createBufferSource();
+        noise.buffer = createNoiseBuffer('white');
+        noise.loop = true;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1200, now);
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.2, now);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(state.audio.masterGain);
+
+        noise.start();
+        state.audio.activeNodes = [noise, filter, gain];
+        break;
+      }
+
+      case 'thunder': {
+        const rainNoise = ctx.createBufferSource();
+        rainNoise.buffer = createNoiseBuffer('white');
+        rainNoise.loop = true;
+        const rainFilter = ctx.createBiquadFilter();
+        rainFilter.type = 'lowpass';
+        rainFilter.frequency.setValueAtTime(900, now);
+        const rainGain = ctx.createGain();
+        rainGain.gain.setValueAtTime(0.15, now);
+
+        // Thunder sub-bass rumble
+        const osc = ctx.createOscillator();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(55, now);
+        const thunderGain = ctx.createGain();
+        thunderGain.gain.setValueAtTime(0.1, now);
+
+        rainNoise.connect(rainFilter);
+        rainFilter.connect(rainGain);
+        rainGain.connect(state.audio.masterGain);
+
+        osc.connect(thunderGain);
+        thunderGain.connect(state.audio.masterGain);
+
+        rainNoise.start();
+        osc.start();
+        state.audio.activeNodes = [rainNoise, rainFilter, rainGain, osc, thunderGain];
+        break;
+      }
+
+      case 'droplet': {
+        playLiquidDropletSFX();
+        break;
+      }
+
+      case 'bowl': {
+        // Tibetan Bowl 432Hz with harmonic overtones
+        const freqs = [432, 864, 1296, 1728];
+        const nodes = [];
+        freqs.forEach((f, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(f, now);
+
+          const vol = 0.2 / (idx + 1);
+          gain.gain.setValueAtTime(vol, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 4.5);
+
+          osc.connect(gain);
+          gain.connect(state.audio.masterGain);
+          osc.start();
+          osc.stop(now + 4.5);
+          nodes.push(osc, gain);
+        });
+        state.audio.activeNodes = nodes;
+        break;
+      }
+
+      case 'tick': {
+        playMechanicalTickSFX();
+        break;
+      }
+
+      case 'space': {
+        const brownNoise = ctx.createBufferSource();
+        brownNoise.buffer = createNoiseBuffer('brown');
+        brownNoise.loop = true;
+
+        const subOsc = ctx.createOscillator();
+        subOsc.type = 'sine';
+        subOsc.frequency.setValueAtTime(65, now);
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(140, now);
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.25, now);
+
+        brownNoise.connect(filter);
+        subOsc.connect(filter);
+        filter.connect(gain);
+        gain.connect(state.audio.masterGain);
+
+        brownNoise.start();
+        subOsc.start();
+        state.audio.activeNodes = [brownNoise, subOsc, filter, gain];
+        break;
+      }
+
+      case 'campfire': {
+        const white = ctx.createBufferSource();
+        white.buffer = createNoiseBuffer('white');
+        white.loop = true;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(2400, now);
+        filter.Q.setValueAtTime(3, now);
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.14, now);
+
+        white.connect(filter);
+        filter.connect(gain);
+        gain.connect(state.audio.masterGain);
+
+        white.start();
+        state.audio.activeNodes = [white, filter, gain];
+        break;
+      }
+
+      case 'birds': {
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(2800, now);
+
+        const lfo = ctx.createOscillator();
+        lfo.frequency.setValueAtTime(5, now);
+        const lfoGain = ctx.createGain();
+        lfoGain.gain.setValueAtTime(400, now);
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.08, now);
+
+        lfo.connect(lfoGain);
+        lfoGain.connect(osc.frequency);
+        osc.connect(gain);
+        gain.connect(state.audio.masterGain);
+
+        lfo.start();
+        osc.start();
+        state.audio.activeNodes = [osc, lfo, lfoGain, gain];
+        break;
+      }
+
+      case 'synth': {
+        // Retro 80s Synth Chime arpeggio
+        const notes = [261.63, 329.63, 392.0, 523.25, 659.25];
+        const nodes = [];
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+
+          gain.gain.setValueAtTime(0, now + idx * 0.12);
+          gain.gain.linearRampToValueAtTime(0.12, now + idx * 0.12 + 0.05);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 1.2);
+
+          osc.connect(gain);
+          gain.connect(state.audio.masterGain);
+          osc.start(now + idx * 0.12);
+          osc.stop(now + idx * 0.12 + 1.2);
+          nodes.push(osc, gain);
+        });
+        state.audio.activeNodes = nodes;
+        break;
+      }
+
+      case 'binaural': {
+        // 440Hz and 450Hz = 10Hz Alpha beat
+        const oscL = ctx.createOscillator();
+        const oscR = ctx.createOscillator();
+        oscL.type = 'sine';
+        oscR.type = 'sine';
+        oscL.frequency.setValueAtTime(440, now);
+        oscR.frequency.setValueAtTime(450, now);
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.15, now);
+
+        oscL.connect(gain);
+        oscR.connect(gain);
+        gain.connect(state.audio.masterGain);
+
+        oscL.start();
+        oscR.start();
+        state.audio.activeNodes = [oscL, oscR, gain];
+        break;
+      }
+
+      case 'zen': {
+        // 528Hz Solfeggio Gong
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(528, now);
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 5.0);
+
+        osc.connect(gain);
+        gain.connect(state.audio.masterGain);
+        osc.start();
+        osc.stop(now + 5.0);
+        state.audio.activeNodes = [osc, gain];
+        break;
+      }
+
+      case 'bubbles': {
+        const noise = ctx.createBufferSource();
+        noise.buffer = createNoiseBuffer('white');
+        noise.loop = true;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(600, now);
+        filter.Q.setValueAtTime(8, now);
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.18, now);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(state.audio.masterGain);
+
+        noise.start();
+        state.audio.activeNodes = [noise, filter, gain];
+        break;
+      }
+
+      case 'wind': {
+        const noise = ctx.createBufferSource();
+        noise.buffer = createNoiseBuffer('pink');
+        noise.loop = true;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(450, now);
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.2, now);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(state.audio.masterGain);
+
+        noise.start();
+        state.audio.activeNodes = [noise, filter, gain];
+        break;
+      }
+
+      case 'cyber': {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, now);
+        osc.frequency.exponentialRampToValueAtTime(2400, now + 0.35);
+
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+        osc.connect(gain);
+        gain.connect(state.audio.masterGain);
+        osc.start();
+        osc.stop(now + 0.35);
+        state.audio.activeNodes = [osc, gain];
+        break;
+      }
+
+      case 'stream': {
+        const noise = ctx.createBufferSource();
+        noise.buffer = createNoiseBuffer('white');
+        noise.loop = true;
+
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1400, now);
+        filter.Q.setValueAtTime(1.5, now);
+
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.2, now);
+
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.connect(state.audio.masterGain);
+
+        noise.start();
+        state.audio.activeNodes = [noise, filter, gain];
+        break;
+      }
+    }
+  }
+
+  function playLiquidDropletSFX() {
+    try {
+      initAudioEngine();
+      const ctx = state.audio.ctx;
+      if (ctx.state === 'suspended') ctx.resume();
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const now = ctx.currentTime;
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1100, now);
+      osc.frequency.exponentialRampToValueAtTime(420, now + 0.12);
+
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+      osc.connect(gain);
+      gain.connect(state.audio.masterGain);
+      osc.start();
+      osc.stop(now + 0.12);
+    } catch {}
+  }
+
+  function playMechanicalTickSFX() {
+    try {
+      initAudioEngine();
+      const ctx = state.audio.ctx;
+      if (ctx.state === 'suspended') ctx.resume();
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const now = ctx.currentTime;
+
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(800, now);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+
+      osc.connect(gain);
+      gain.connect(state.audio.masterGain);
+      osc.start();
+      osc.stop(now + 0.03);
+    } catch {}
+  }
+
+  function playClickSound() {
+    if (state.options.clickSfx) {
+      playLiquidDropletSFX();
+    }
+  }
+
+  // Render 16 sound cards in modal
+  function renderSoundsGrid() {
+    if (!soundsGrid) return;
+    soundsGrid.innerHTML = '';
+
+    SOUNDS.forEach((s) => {
+      const card = document.createElement('div');
+      card.className = `sound-card ${s.id === state.audio.activeSoundId ? 'playing' : ''}`;
+      card.dataset.sound = s.id;
+
+      card.innerHTML = `
+        <div class="sound-card-left">
+          <span class="sound-emoji">${s.emoji}</span>
+          <div class="sound-card-info">
+            <span class="sound-card-title">${s.name}</span>
+            <span class="sound-card-tag">${s.type === 'ambient' ? 'AMBIENT STREAM' : 'SOUND EFFECT'}</span>
+          </div>
+        </div>
+        <button class="sound-play-btn sfx-click" aria-label="Play ${s.name}">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+        </button>
+      `;
+
+      card.addEventListener('click', () => {
+        playSound(s.id);
+      });
+
+      soundsGrid.appendChild(card);
+    });
+  }
+
+  // Sound Studio Modal Toggles
+  soundStudioBtn.addEventListener('click', () => {
+    soundModal.style.display = 'flex';
+    renderSoundsGrid();
+  });
+
+  closeSoundModal.addEventListener('click', () => {
+    soundModal.style.display = 'none';
+  });
+
+  deckStopBtn.addEventListener('click', () => {
+    stopAllSounds();
+  });
+
+  masterVolumeSlider.addEventListener('input', (e) => {
+    const val = parseInt(e.target.value, 10);
+    state.options.volume = val;
+    localStorage.setItem('opt_volume', val);
+    volumeValText.textContent = `${val}%`;
+    if (state.audio.masterGain && state.audio.ctx) {
+      state.audio.masterGain.gain.setValueAtTime(val / 100, state.audio.ctx.currentTime);
+    }
+  });
+
+  toggleClickSfx.addEventListener('change', (e) => {
+    state.options.clickSfx = e.target.checked;
+    localStorage.setItem('opt_click_sfx', e.target.checked);
+  });
+
+  toggleClockTick.addEventListener('change', (e) => {
+    state.options.clockTick = e.target.checked;
+    localStorage.setItem('opt_clock_tick', e.target.checked);
+  });
+
+  // Global UI Click Sound listener for interactive elements
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.sfx-click') || e.target.closest('button')) {
+      playClickSound();
+    }
+  });
+
+  // ==========================================================================
+  // 3. SETTINGS & OPTIONS ENGINE
+  // ==========================================================================
+  function applyOptions() {
+    // Show/hide milliseconds
+    if (msecEl) msecEl.style.display = state.options.showMs ? 'inline' : 'none';
+
+    // Show/hide seconds
+    if (secondsBox && secondsSeparator) {
+      secondsBox.style.display = state.options.showSec ? 'flex' : 'none';
+      secondsSeparator.style.display = state.options.showSec ? 'inline' : 'none';
+    }
+
+    // Show/hide progress track
+    if (fluidProgressWrap) {
+      fluidProgressWrap.style.display = state.options.showProgress ? 'block' : 'none';
+    }
+
+    // Show/hide wave tank
+    if (liquidWaveTank) {
+      liquidWaveTank.style.display = state.options.waveTank ? 'block' : 'none';
+    }
+
+    // Font selection
+    document.body.classList.remove('font-space', 'font-syne');
+    if (state.options.font === 'space') {
+      document.body.classList.add('font-space');
+    } else if (state.options.font === 'syne') {
+      document.body.classList.add('font-syne');
+    }
+
+    // Sync input values in settings modal
+    if (optShowMs) optShowMs.checked = state.options.showMs;
+    if (optShowSec) optShowSec.checked = state.options.showSec;
+    if (optShowProgress) optShowProgress.checked = state.options.showProgress;
+    if (optWaveTank) optWaveTank.checked = state.options.waveTank;
+    if (masterVolumeSlider) masterVolumeSlider.value = state.options.volume;
+    if (volumeValText) volumeValText.textContent = `${state.options.volume}%`;
+    if (toggleClickSfx) toggleClickSfx.checked = state.options.clickSfx;
+    if (toggleClockTick) toggleClockTick.checked = state.options.clockTick;
+
+    // Font pills
+    $$('#font-selector .opt-pill').forEach((p) => {
+      p.classList.toggle('active', p.dataset.font === state.options.font);
+    });
+
+    // Density pills
+    $$('#density-selector .opt-pill').forEach((p) => {
+      p.classList.toggle('active', p.dataset.density === state.options.density);
+    });
+  }
+
+  settingsBtn.addEventListener('click', () => {
+    settingsModal.style.display = 'flex';
+    applyOptions();
+  });
+
+  closeSettingsModal.addEventListener('click', () => {
+    settingsModal.style.display = 'none';
+  });
+
+  // Close modals on outside backdrop click
+  [themesModal, soundModal, settingsModal].forEach((m) => {
+    if (m) {
+      m.addEventListener('click', (e) => {
+        if (e.target === m) m.style.display = 'none';
+      });
+    }
+  });
+
+  // Settings Toggles Change Handlers
+  if (optShowMs) {
+    optShowMs.addEventListener('change', (e) => {
+      state.options.showMs = e.target.checked;
+      localStorage.setItem('opt_show_ms', e.target.checked);
+      applyOptions();
+    });
+  }
+
+  if (optShowSec) {
+    optShowSec.addEventListener('change', (e) => {
+      state.options.showSec = e.target.checked;
+      localStorage.setItem('opt_show_sec', e.target.checked);
+      applyOptions();
+    });
+  }
+
+  if (optShowProgress) {
+    optShowProgress.addEventListener('change', (e) => {
+      state.options.showProgress = e.target.checked;
+      localStorage.setItem('opt_show_progress', e.target.checked);
+      applyOptions();
+    });
+  }
+
+  if (optWaveTank) {
+    optWaveTank.addEventListener('change', (e) => {
+      state.options.waveTank = e.target.checked;
+      localStorage.setItem('opt_wave_tank', e.target.checked);
+      applyOptions();
+    });
+  }
+
+  // Font selector pills
+  $$('#font-selector .opt-pill').forEach((pill) => {
+    pill.addEventListener('click', () => {
+      state.options.font = pill.dataset.font;
+      localStorage.setItem('opt_font', state.options.font);
+      applyOptions();
+    });
+  });
+
+  // Density selector pills
+  $$('#density-selector .opt-pill').forEach((pill) => {
+    pill.addEventListener('click', () => {
+      state.options.density = pill.dataset.density;
+      localStorage.setItem('opt_density', state.options.density);
+      applyOptions();
+      initParticles();
+    });
+  });
+
+  if (btnResetSettings) {
+    btnResetSettings.addEventListener('click', () => {
+      state.options = {
+        showMs: true,
+        showSec: true,
+        showProgress: true,
+        waveTank: true,
+        font: 'outfit',
+        density: 'medium',
+        volume: 70,
+        clickSfx: true,
+        clockTick: false
+      };
+      localStorage.clear();
+      applyTheme('ocean');
+      applyOptions();
+      initParticles();
+    });
+  }
+
+  // Format 12h/24h toggle
   function updateFormatUI() {
     formatIndicator.textContent = state.is24Hour ? '24H' : '12H';
     localStorage.setItem('nexviqa_24h', state.is24Hour);
@@ -173,10 +998,10 @@
   });
 
   // Tab Navigation
-  navButtons.forEach((btn) => {
+  $$('.nav-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
-      navButtons.forEach((b) => b.classList.remove('active'));
-      tabPanes.forEach((p) => p.classList.remove('active'));
+      $$('.nav-btn').forEach((b) => b.classList.remove('active'));
+      $$('.tab-pane').forEach((p) => p.classList.remove('active'));
 
       btn.classList.add('active');
       const targetPane = $(btn.dataset.tab);
@@ -189,10 +1014,9 @@
   });
 
   // Clock Mode Switching (Digital / Analog / Split)
-  const modePills = $$('.mode-pill');
-  modePills.forEach((pill) => {
+  $$('.mode-pill').forEach((pill) => {
     pill.addEventListener('click', () => {
-      modePills.forEach((p) => p.classList.remove('active'));
+      $$('.mode-pill').forEach((p) => p.classList.remove('active'));
       pill.classList.add('active');
 
       if (pill.id === 'btn-mode-digital') {
@@ -211,7 +1035,7 @@
     });
   });
 
-  // Build analog dial marks (12 major, 48 minor)
+  // Build analog dial marks
   function buildDialMarks() {
     if (!dialMarks) return;
     dialMarks.innerHTML = '';
@@ -225,7 +1049,7 @@
   buildDialMarks();
 
   // ==========================================================================
-  // 2. LIQUID CLOCK ENGINE
+  // 4. REAL-TIME LIQUID CLOCK ENGINE
   // ==========================================================================
   function padZero(num, digits = 2) {
     return String(num).padStart(digits, '0');
@@ -256,6 +1080,14 @@
     const seconds = now.getSeconds();
     const milliseconds = now.getMilliseconds();
 
+    // Trigger tick sound on second transition
+    if (seconds !== state.lastSecond) {
+      state.lastSecond = seconds;
+      if (state.options.clockTick) {
+        playMechanicalTickSFX();
+      }
+    }
+
     // 12/24 hour display
     let ampmStr = 'AM';
     if (!state.is24Hour) {
@@ -272,7 +1104,7 @@
     ampmEl.textContent = ampmStr;
     msecEl.textContent = '.' + padZero(Math.floor(milliseconds / 10));
 
-    // Progress Bar (current minute progress)
+    // Progress Bar
     const secProgress = ((seconds + milliseconds / 1000) / 60) * 100;
     secondProgressBar.style.width = `${secProgress}%`;
     secondRatio.textContent = `${padZero(seconds)} / 60s`;
@@ -314,7 +1146,7 @@
       timezoneTag.textContent = 'Local Time';
     }
 
-    // Update UTC Observatory Clock if visible
+    // Update UTC Observatory Clock
     const utcTimeEl = $('utc-clock-time');
     if (utcTimeEl) {
       utcTimeEl.textContent = `${padZero(now.getUTCHours())}:${padZero(now.getUTCMinutes())}:${padZero(now.getUTCSeconds())}`;
@@ -324,7 +1156,7 @@
   }
 
   // ==========================================================================
-  // 3. INTELLIGENT LIVE WEATHER STATION (Open-Meteo Integration)
+  // 5. INTELLIGENT LIVE WEATHER STATION (Open-Meteo Integration)
   // ==========================================================================
   const WMO_CODES = {
     0: { desc: 'Clear Sky', icon: 'clear-day' },
@@ -544,7 +1376,6 @@
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
 
-          // Reverse geocode via BigDataCloud client API
           try {
             const revRes = await fetch(
               `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`
@@ -558,7 +1389,6 @@
           }
         },
         () => {
-          // If denied, fallback to New Delhi
           fetchLiveWeather(28.6139, 77.2090, 'New Delhi', 'India');
         },
         { timeout: 7000 }
@@ -588,7 +1418,7 @@
           searchSuggestions.innerHTML = '';
           data.results.forEach((item) => {
             const div = document.createElement('div');
-            div.className = 'search-suggestion-item';
+            div.className = 'search-suggestion-item sfx-click';
             div.textContent = `${item.name}, ${item.admin1 ? item.admin1 + ', ' : ''}${item.country}`;
             div.addEventListener('click', () => {
               citySearchInput.value = '';
@@ -627,7 +1457,7 @@
   });
 
   // ==========================================================================
-  // 4. WORLD CLOCK OBSERVATORY
+  // 6. WORLD CLOCK OBSERVATORY
   // ==========================================================================
   const WORLD_HUBS = [
     { city: 'Tokyo', region: 'Japan', timeZone: 'Asia/Tokyo' },
@@ -662,7 +1492,6 @@
         day: 'numeric'
       });
 
-      // Target hour for day/night
       const hubHour = parseInt(
         now.toLocaleTimeString('en-US', { timeZone: hub.timeZone, hour: '2-digit', hour12: false }),
         10
@@ -696,8 +1525,17 @@
   }, 1000);
 
   // ==========================================================================
-  // 5. FLUID STOPWATCH
+  // 7. FLUID STOPWATCH
   // ==========================================================================
+  const swDisplay = $('sw-display');
+  const swStatus = $('sw-status');
+  const swRingProgress = $('stopwatch-ring-progress');
+  const swStartBtn = $('sw-start-btn');
+  const swLapBtn = $('sw-lap-btn');
+  const swResetBtn = $('sw-reset-btn');
+  const swLapsWrapper = $('sw-laps-wrapper');
+  const swLapList = $('sw-lap-list');
+
   function formatStopwatch(ms) {
     const totalSec = Math.floor(ms / 1000);
     const h = Math.floor(totalSec / 3600);
@@ -711,7 +1549,6 @@
     const currentMs = state.stopwatch.elapsedTime + (performance.now() - state.stopwatch.startTime);
     swDisplay.innerHTML = formatStopwatch(currentMs);
 
-    // Liquid Ring progress (fills every second)
     const ringOffset = 816.8 - ((currentMs % 1000) / 1000) * 816.8;
     swRingProgress.style.strokeDashoffset = ringOffset;
 
@@ -720,7 +1557,6 @@
 
   swStartBtn.addEventListener('click', () => {
     if (!state.stopwatch.running) {
-      // Start / Resume
       state.stopwatch.running = true;
       state.stopwatch.startTime = performance.now();
       swStatus.textContent = 'RUNNING';
@@ -732,7 +1568,6 @@
       swResetBtn.disabled = false;
       updateStopwatch();
     } else {
-      // Pause
       state.stopwatch.running = false;
       cancelAnimationFrame(state.stopwatch.timerId);
       state.stopwatch.elapsedTime += performance.now() - state.stopwatch.startTime;
@@ -783,8 +1618,17 @@
   });
 
   // ==========================================================================
-  // 6. LIQUID CHAMBER COUNTDOWN TIMER
+  // 8. LIQUID CHAMBER COUNTDOWN TIMER
   // ==========================================================================
+  const timerFill = $('timer-fill');
+  const timerInputsGroup = $('timer-inputs-group');
+  const timerActiveDisplay = $('timer-active-display');
+  const timerH = $('timer-h');
+  const timerM = $('timer-m');
+  const timerS = $('timer-s');
+  const timerToggleBtn = $('timer-toggle-btn');
+  const timerResetBtn = $('timer-reset-btn');
+
   function getTimerTotalSeconds() {
     const h = parseInt(timerH.value, 10) || 0;
     const m = parseInt(timerM.value, 10) || 0;
@@ -808,7 +1652,7 @@
     timerFill.style.height = `${Math.max(0, Math.min(100, ratio))}%`;
   }
 
-  presetPills.forEach((pill) => {
+  $$('.preset-pill').forEach((pill) => {
     pill.addEventListener('click', () => {
       if (state.timer.running) return;
       const secs = parseInt(pill.dataset.seconds, 10);
@@ -824,7 +1668,6 @@
 
   timerToggleBtn.addEventListener('click', () => {
     if (!state.timer.running) {
-      // Start timer
       const secs = getTimerTotalSeconds();
       if (secs <= 0) return;
 
@@ -847,7 +1690,7 @@
           clearInterval(state.timer.intervalId);
           state.timer.running = false;
           timerToggleBtn.textContent = 'Start Countdown';
-          playTimerAlarm();
+          playSound('bowl');
           alert('💧 Nexviqa Timer: Interval Complete!');
           timerInputsGroup.style.display = 'flex';
           timerActiveDisplay.style.display = 'none';
@@ -855,7 +1698,6 @@
         }
       }, 1000);
     } else {
-      // Pause timer
       clearInterval(state.timer.intervalId);
       state.timer.running = false;
       timerToggleBtn.textContent = 'Resume Countdown';
@@ -871,113 +1713,12 @@
     timerFill.style.height = '100%';
   });
 
-  function playTimerAlarm() {
-    try {
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(880, audioCtx.currentTime); // A5 note
-      osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.8);
-      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.8);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.8);
-    } catch {
-      // Web Audio not permitted or supported
-    }
-  }
-
   // ==========================================================================
-  // 7. WEB AUDIO SYNTHESIZED LIQUID SOUNDSCAPES
-  // ==========================================================================
-  function initAmbientAudio() {
-    if (state.audio.ctx) return;
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    state.audio.ctx = new AudioCtx();
-  }
-
-  function startAmbientStream() {
-    initAmbientAudio();
-    const ctx = state.audio.ctx;
-    if (ctx.state === 'suspended') ctx.resume();
-
-    // Generate Pink/Brown Noise for Oceanic Liquid Waves
-    const bufferSize = 2 * ctx.sampleRate;
-    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const output = noiseBuffer.getChannelData(0);
-    let b0 = 0, b1 = 0, b2 = 0;
-    for (let i = 0; i < bufferSize; i++) {
-      const white = Math.random() * 2 - 1;
-      b0 = 0.99886 * b0 + white * 0.0555179;
-      b1 = 0.99332 * b1 + white * 0.0750759;
-      b2 = 0.96900 * b2 + white * 0.1538520;
-      output[i] = (b0 + b1 + b2) * 0.15;
-    }
-
-    const whiteNoise = ctx.createBufferSource();
-    whiteNoise.buffer = noiseBuffer;
-    whiteNoise.loop = true;
-
-    // Filter to simulate deep fluid resonance
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(320, ctx.currentTime);
-
-    // LFO to simulate rhythmic ocean swell
-    const lfo = ctx.createOscillator();
-    lfo.frequency.setValueAtTime(0.12, ctx.currentTime); // 8 second cycle
-
-    const lfoGain = ctx.createGain();
-    lfoGain.gain.setValueAtTime(0.08, ctx.currentTime);
-
-    const masterGain = ctx.createGain();
-    masterGain.gain.setValueAtTime(0.12, ctx.currentTime);
-
-    lfo.connect(masterGain.gain);
-    whiteNoise.connect(filter);
-    filter.connect(masterGain);
-    masterGain.connect(ctx.destination);
-
-    whiteNoise.start();
-    lfo.start();
-
-    state.audio.nodes = [whiteNoise, lfo, masterGain, filter];
-    state.audio.isPlaying = true;
-  }
-
-  function stopAmbientStream() {
-    state.audio.nodes.forEach((n) => {
-      try {
-        if (n.stop) n.stop();
-        n.disconnect();
-      } catch {}
-    });
-    state.audio.nodes = [];
-    state.audio.isPlaying = false;
-  }
-
-  soundscapeToggle.addEventListener('click', () => {
-    if (!state.audio.isPlaying) {
-      startAmbientStream();
-      soundscapeToggle.classList.add('active');
-      soundLabel.textContent = 'Ocean Ambient';
-    } else {
-      stopAmbientStream();
-      soundscapeToggle.classList.remove('active');
-      soundLabel.textContent = 'Ambient Off';
-    }
-  });
-
-  // ==========================================================================
-  // 8. INTERACTIVE LIQUID BACKGROUND CANVAS
+  // 9. INTERACTIVE LIQUID BACKGROUND CANVAS PHYSICS
   // ==========================================================================
   let width, height;
   let particles = [];
   let mouse = { x: -1000, y: -1000, radius: 140 };
-  let lastTime = performance.now();
   let frameCount = 0;
   let lastFpsUpdate = performance.now();
 
@@ -1009,13 +1750,11 @@
       this.x += this.vx;
       this.y += this.vy;
 
-      // Gentle bounds bounce
       if (this.x < -this.radius) this.x = width + this.radius;
       if (this.x > width + this.radius) this.x = -this.radius;
       if (this.y < -this.radius) this.y = height + this.radius;
       if (this.y > height + this.radius) this.y = -this.radius;
 
-      // Mouse displacement
       const dx = mouse.x - this.x;
       const dy = mouse.y - this.y;
       const dist = Math.hypot(dx, dy);
@@ -1042,7 +1781,10 @@
 
   function initParticles() {
     particles = [];
-    const count = Math.min(24, Math.floor((width * height) / 45000));
+    let count = 24;
+    if (state.options.density === 'low') count = 12;
+    else if (state.options.density === 'high') count = 48;
+
     for (let i = 0; i < count; i++) {
       particles.push(new LiquidDrop());
     }
@@ -1054,7 +1796,6 @@
     mouse.y = e.clientY;
   });
 
-  // Ripple waves on click
   window.addEventListener('click', (e) => {
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i];
@@ -1070,13 +1811,13 @@
   });
 
   function getThemeRGB() {
-    switch (state.theme) {
-      case 'neon': return 'rgb(217, 70, 239)';
-      case 'emerald': return 'rgb(16, 185, 129)';
-      case 'solar': return 'rgb(245, 158, 11)';
-      case 'mercury': return 'rgb(203, 213, 225)';
-      default: return 'rgb(0, 210, 255)';
-    }
+    const t = THEMES.find((item) => item.id === state.theme);
+    if (!t) return 'rgb(0, 210, 255)';
+    const hex = t.dots[0];
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgb(${r}, ${g}, ${b})`;
   }
 
   function animateCanvas(now) {
@@ -1103,6 +1844,7 @@
   // ==========================================================================
   window.addEventListener('DOMContentLoaded', () => {
     applyTheme(state.theme);
+    applyOptions();
     updateFormatUI();
     resizeCanvas();
     requestAnimationFrame(animateCanvas);
