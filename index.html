@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexviqa — Liquid Chronos & Atmospheric Weather</title>
+  <meta name="description" content="Nexviqa is an ultra-modern liquid glass clock and real-time atmospheric weather station featuring fluid aesthetics, world time, stopwatch, and ambient soundscapes.">
+  <meta name="theme-color" content="#030712">
+
+  <!-- Open Graph / Meta for Cloudflare deployment preview -->
+  <meta property="og:title" content="Nexviqa — Liquid Chronos & Atmospheric Weather">
+  <meta property="og:description" content="A state-of-the-art liquid glass clock and live weather station with interactive fluid dynamics.">
+  <meta property="og:type" content="website">
+
+  <!-- Google Fonts: Outfit & Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💧</text></svg>">
+</head>
+<body>
+  <!-- Liquid Interactive Background Canvas -->
+  <canvas id="liquid-canvas"></canvas>
+
+  <!-- Ambient Fluid Lighting Blurs -->
+  <div class="fluid-orb orb-1"></div>
+  <div class="fluid-orb orb-2"></div>
+  <div class="fluid-orb orb-3"></div>
+  <div class="liquid-mesh-overlay"></div>
+
+  <!-- Main Container -->
+  <div class="app-layout">
+    <!-- Top Navigation / Header -->
+    <header class="app-header glass-card">
+      <div class="brand-group">
+        <div class="brand-icon-wrapper">
+          <svg class="liquid-drop-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+            <circle cx="12" cy="14" r="3" class="inner-pulse-dot" fill="currentColor"></circle>
+          </svg>
+          <div class="glow-ring"></div>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">NEXVIQA</h1>
+          <span class="brand-subtitle">LIQUID CHRONOS &bull; ATMOSPHERE</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" role="tablist">
+        <button class="nav-btn active" data-tab="clock-view" id="tab-clock">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          <span>Clock</span>
+        </button>
+        <button class="nav-btn" data-tab="world-view" id="tab-world">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+          <span>World</span>
+        </button>
+        <button class="nav-btn" data-tab="stopwatch-view" id="tab-stopwatch">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="13" r="8"></circle><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="5" x2="12" y2="2"></line><line x1="10" y1="2" x2="14" y2="2"></line></svg>
+          <span>Stopwatch</span>
+        </button>
+        <button class="nav-btn" data-tab="timer-view" id="tab-timer">
+          <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M5 22h14"></path><path d="M5 2h14"></path><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"></path><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"></path></svg>
+          <span>Timer</span>
+        </button>
+      </nav>
+
+      <!-- Right Header Controls -->
+      <div class="header-actions">
+        <!-- Soundscape Generator Button -->
+        <button class="icon-action-btn" id="soundscape-toggle" title="Liquid Ambient Audio" aria-label="Toggle Ambient Audio">
+          <svg id="sound-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          </svg>
+          <span class="sound-label">Ambient Off</span>
+        </button>
+
+        <!-- Theme Preset Picker -->
+        <div class="theme-dropdown-container">
+          <button class="icon-action-btn" id="theme-btn" title="Fluid Color Accent" aria-label="Theme Color Accent">
+            <span class="theme-dot current-theme-dot"></span>
+            <span class="theme-name">Ocean</span>
+          </button>
+          <div class="theme-menu glass-card" id="theme-menu">
+            <button class="theme-option" data-theme="ocean"><span class="theme-dot" style="background:#00d2ff"></span> Ocean Cyan</button>
+            <button class="theme-option" data-theme="neon"><span class="theme-dot" style="background:#b026ff"></span> Neon Violet</button>
+            <button class="theme-option" data-theme="emerald"><span class="theme-dot" style="background:#00f5a0"></span> Bioluminescent</button>
+            <button class="theme-option" data-theme="solar"><span class="theme-dot" style="background:#ff7b00"></span> Solar Amber</button>
+            <button class="theme-option" data-theme="mercury"><span class="theme-dot" style="background:#e0e8f5"></span> Liquid Silver</button>
+          </div>
+        </div>
+
+        <!-- 12/24H Format Toggle -->
+        <button class="format-toggle-btn glass-pill" id="format-toggle" title="Toggle 12h/24h Format">
+          <span id="format-indicator">24H</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Dynamic Content Views -->
+    <main class="main-content">
+
+      <!-- TAB 1: CLOCK & WEATHER VIEW (DEFAULT) -->
+      <section class="tab-pane active" id="clock-view">
+        <div class="clock-weather-grid">
+
+          <!-- Left / Primary: The Liquid Chronos Display Card -->
+          <div class="glass-card hero-clock-card">
+            <!-- Glass specular top reflection -->
+            <div class="card-specular-highlight"></div>
+
+            <!-- Top bar inside card -->
+            <div class="card-header-bar">
+              <div class="clock-mode-switches">
+                <button class="mode-pill active" id="btn-mode-digital">Digital Fluid</button>
+                <button class="mode-pill" id="btn-mode-analog">Analog Viscous</button>
+                <button class="mode-pill" id="btn-mode-split">Dual Core</button>
+              </div>
+              <div class="time-precision-badge">
+                <span class="pulse-indicator"></span>
+                <span id="utc-offset-badge">UTC +05:30</span>
+              </div>
+            </div>
+
+            <!-- DIGITAL LIQUID CLOCK -->
+            <div class="digital-clock-container" id="digital-view">
+              <!-- Water Level Wave Tank Behind Digits -->
+              <div class="liquid-wave-tank">
+                <div class="liquid-wave wave-1" id="wave-1"></div>
+                <div class="liquid-wave wave-2" id="wave-2"></div>
+              </div>
+
+              <div class="digits-wrapper">
+                <div class="digit-box" id="hours-box">
+                  <span class="time-num" id="hours">00</span>
+                  <span class="digit-label">HOURS</span>
+                </div>
+                <span class="fluid-separator">:</span>
+                <div class="digit-box" id="minutes-box">
+                  <span class="time-num" id="minutes">00</span>
+                  <span class="digit-label">MINUTES</span>
+                </div>
+                <span class="fluid-separator">:</span>
+                <div class="digit-box" id="seconds-box">
+                  <span class="time-num accent-text" id="seconds">00</span>
+                  <span class="digit-label">SECONDS</span>
+                </div>
+                <div class="period-box" id="ampm-box">
+                  <span class="ampm-text" id="ampm">AM</span>
+                  <span class="msec-text" id="milliseconds">.00</span>
+                </div>
+              </div>
+
+              <!-- Fluid Progress Bar for the Current Minute -->
+              <div class="fluid-progress-wrap">
+                <div class="fluid-progress-track">
+                  <div class="fluid-progress-bar" id="second-progress-bar">
+                    <div class="fluid-droplet-glow"></div>
+                  </div>
+                </div>
+                <div class="progress-details">
+                  <span id="second-ratio">00 / 60s</span>
+                  <span id="day-percent">0% of day completed</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ANALOG LIQUID CLOCK (Hidden by default, shown in analog/split mode) -->
+            <div class="analog-clock-container" id="analog-view" style="display: none;">
+              <div class="analog-face">
+                <div class="analog-liquid-depth"></div>
+                <div class="dial-center-orb"></div>
+
+                <!-- Clock Marks -->
+                <div class="dial-marks" id="dial-marks"></div>
+
+                <!-- Hands -->
+                <div class="hand hour-hand" id="analog-hour">
+                  <div class="hand-line"></div>
+                  <div class="hand-droplet"></div>
+                </div>
+                <div class="hand minute-hand" id="analog-minute">
+                  <div class="hand-line"></div>
+                  <div class="hand-droplet"></div>
+                </div>
+                <div class="hand second-hand" id="analog-second">
+                  <div class="hand-line"></div>
+                  <div class="hand-tail"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card Bottom: Date & Planetary Metadata -->
+            <div class="clock-footer-meta">
+              <div class="date-full-pill">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                <span id="calendar-date">Loading date...</span>
+              </div>
+              <div class="sub-meta-tags">
+                <span class="meta-tag" id="day-of-week-tag">Wednesday</span>
+                <span class="meta-tag" id="day-of-year-tag">Day --</span>
+                <span class="meta-tag" id="week-number-tag">Week --</span>
+                <span class="meta-tag" id="timezone-name-tag">Local Time</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Intelligent Weather Station Card -->
+          <div class="glass-card weather-station-card">
+            <div class="card-specular-highlight"></div>
+
+            <!-- Weather Card Header & Search -->
+            <div class="weather-top-header">
+              <div class="weather-title-wrap">
+                <div class="weather-badge">
+                  <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path></svg>
+                  <span>LIVE ATMOSPHERE</span>
+                </div>
+                <h2 class="location-name" id="weather-city">Detecting...</h2>
+                <span class="location-country" id="weather-country">Searching coordinates</span>
+              </div>
+
+              <button class="locate-btn glass-pill" id="btn-geolocate" title="Use My Current GPS Location">
+                <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+                <span>GPS</span>
+              </button>
+            </div>
+
+            <!-- City Search Box -->
+            <div class="search-form-wrap">
+              <form id="city-search-form" class="search-input-box">
+                <svg class="search-icon" viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="city-search-input" placeholder="Search any city in the world..." autocomplete="off">
+                <button type="submit" id="city-search-submit" class="search-btn">Search</button>
+              </form>
+              <div class="search-suggestions glass-card" id="search-suggestions" style="display:none;"></div>
+            </div>
+
+            <!-- Main Temperature & Dynamic Weather Glyph -->
+            <div class="weather-hero-row">
+              <div class="weather-glyph-wrapper" id="weather-icon-container">
+                <!-- SVG dynamically inserted by JS -->
+                <div class="weather-glyph-spinner"></div>
+              </div>
+              <div class="temp-display-wrap">
+                <div class="temp-digits">
+                  <span class="temp-value" id="current-temp">--</span>
+                  <div class="unit-toggle">
+                    <button class="unit-btn active" id="btn-celsius">°C</button>
+                    <span class="unit-divider">/</span>
+                    <button class="unit-btn" id="btn-fahrenheit">°F</button>
+                  </div>
+                </div>
+                <p class="weather-condition-desc" id="weather-desc">Syncing satellites...</p>
+                <p class="feels-like-text">Feels like <span id="feels-like-val">--</span></p>
+              </div>
+            </div>
+
+            <!-- Weather Metrics Quad-Grid -->
+            <div class="weather-metrics-grid">
+              <div class="metric-glass-pill">
+                <div class="metric-icon-wrap blue-glow">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+                </div>
+                <div class="metric-data">
+                  <span class="metric-title">Humidity</span>
+                  <span class="metric-value" id="humidity-val">--%</span>
+                </div>
+              </div>
+
+              <div class="metric-glass-pill">
+                <div class="metric-icon-wrap cyan-glow">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"></path></svg>
+                </div>
+                <div class="metric-data">
+                  <span class="metric-title">Wind Speed</span>
+                  <span class="metric-value" id="wind-val">-- km/h</span>
+                </div>
+              </div>
+
+              <div class="metric-glass-pill">
+                <div class="metric-icon-wrap purple-glow">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>
+                </div>
+                <div class="metric-data">
+                  <span class="metric-title">UV Index</span>
+                  <span class="metric-value" id="uv-val">--</span>
+                </div>
+              </div>
+
+              <div class="metric-glass-pill">
+                <div class="metric-icon-wrap emerald-glow">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                </div>
+                <div class="metric-data">
+                  <span class="metric-title">Air Pressure</span>
+                  <span class="metric-value" id="pressure-val">-- hPa</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Mini 5-Day Forecast Row -->
+            <div class="forecast-section">
+              <span class="forecast-section-title">5-DAY ATMOSPHERIC OUTLOOK</span>
+              <div class="forecast-row" id="forecast-days-container">
+                <!-- Forecast items injected via JS -->
+                <div class="forecast-placeholder">Loading outlook...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: WORLD TIME -->
+      <section class="tab-pane" id="world-view">
+        <div class="glass-card full-pane-card">
+          <div class="card-specular-highlight"></div>
+          <div class="pane-title-row">
+            <div>
+              <h2 class="pane-title">Global Chronos Observatory</h2>
+              <p class="pane-subtitle">Live synchronous timezones across major world hubs</p>
+            </div>
+            <div class="quick-add-wrap">
+              <span class="live-dot-pulse"></span>
+              <span class="mono-text">COORDINATED UNIVERSAL TIME (UTC): <strong id="utc-clock-time">--:--:--</strong></span>
+            </div>
+          </div>
+
+          <div class="world-cities-grid" id="world-cities-grid">
+            <!-- Dynamically generated world city cards -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: STOPWATCH -->
+      <section class="tab-pane" id="stopwatch-view">
+        <div class="glass-card full-pane-card centered-pane">
+          <div class="card-specular-highlight"></div>
+          <div class="stopwatch-shell">
+            <h2 class="pane-title">Fluid Precision Chronometer</h2>
+            <p class="pane-subtitle">High-precision milliseconds counter with fluid lap recording</p>
+
+            <div class="stopwatch-display-ring">
+              <svg class="ring-svg" viewBox="0 0 300 300">
+                <circle class="ring-track" cx="150" cy="150" r="130"></circle>
+                <circle class="ring-liquid" id="stopwatch-ring-progress" cx="150" cy="150" r="130"></circle>
+              </svg>
+              <div class="stopwatch-center-text">
+                <div class="sw-time-digits" id="sw-display">00:00:00<span class="sw-ms">.00</span></div>
+                <span class="sw-status-label" id="sw-status">STANDBY</span>
+              </div>
+            </div>
+
+            <div class="stopwatch-controls">
+              <button class="action-btn primary-glass-btn" id="sw-start-btn">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                <span>Start</span>
+              </button>
+              <button class="action-btn glass-btn" id="sw-lap-btn" disabled>
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <span>Lap</span>
+              </button>
+              <button class="action-btn glass-btn danger-hover" id="sw-reset-btn" disabled>
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                <span>Reset</span>
+              </button>
+            </div>
+
+            <!-- Lap History List -->
+            <div class="lap-times-container" id="sw-laps-wrapper" style="display:none;">
+              <h3 class="lap-header">Recorded Fluid Laps</h3>
+              <div class="lap-list" id="sw-lap-list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: FLUID COUNTDOWN TIMER -->
+      <section class="tab-pane" id="timer-view">
+        <div class="glass-card full-pane-card centered-pane">
+          <div class="card-specular-highlight"></div>
+          <div class="timer-shell">
+            <h2 class="pane-title">Liquid Chamber Countdown</h2>
+            <p class="pane-subtitle">Set interval duration with visual fluid drainage</p>
+
+            <!-- Presets -->
+            <div class="timer-preset-row">
+              <button class="preset-pill" data-seconds="60">1 Min</button>
+              <button class="preset-pill" data-seconds="300">5 Min</button>
+              <button class="preset-pill" data-seconds="600">10 Min</button>
+              <button class="preset-pill" data-seconds="1500">25 Min (Pomodoro)</button>
+              <button class="preset-pill" data-seconds="3600">1 Hour</button>
+            </div>
+
+            <!-- Timer Cylinder Display -->
+            <div class="timer-chamber">
+              <div class="timer-liquid-fill" id="timer-fill"></div>
+              <div class="timer-inner-content">
+                <div class="timer-inputs" id="timer-inputs-group">
+                  <div class="timer-input-col">
+                    <input type="number" id="timer-h" min="0" max="99" value="00" placeholder="00">
+                    <span>H</span>
+                  </div>
+                  <span class="timer-colon">:</span>
+                  <div class="timer-input-col">
+                    <input type="number" id="timer-m" min="0" max="59" value="05" placeholder="00">
+                    <span>M</span>
+                  </div>
+                  <span class="timer-colon">:</span>
+                  <div class="timer-input-col">
+                    <input type="number" id="timer-s" min="0" max="59" value="00" placeholder="00">
+                    <span>S</span>
+                  </div>
+                </div>
+
+                <div class="timer-active-readout" id="timer-active-display" style="display:none;">
+                  00:05:00
+                </div>
+              </div>
+            </div>
+
+            <div class="timer-controls">
+              <button class="action-btn primary-glass-btn" id="timer-toggle-btn">Start Countdown</button>
+              <button class="action-btn glass-btn" id="timer-reset-btn">Reset</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Status Bar & Cloudflare Deploy Indicator -->
+    <footer class="app-footer glass-card">
+      <div class="footer-left">
+        <span class="cf-badge">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="#f6821f"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"></path></svg>
+          Cloudflare Pages Ready
+        </span>
+        <span class="footer-divider">&bull;</span>
+        <span class="footer-info">Nexviqa &bull; Open-Meteo Satellites &bull; Zero API Key Needed</span>
+      </div>
+      <div class="footer-right">
+        <span class="fps-counter" id="fps-counter">60 FPS</span>
+        <span class="footer-divider">&bull;</span>
+        <span class="credit-text">Designed & Crafted for <strong>thisispiyushdev</strong></span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
